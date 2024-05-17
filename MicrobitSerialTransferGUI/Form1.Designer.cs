@@ -1,4 +1,4 @@
-﻿namespace MicrobitSerialTransfer
+﻿namespace MicrobitSerialTransferGUI
 {
     partial class Form1
     {
