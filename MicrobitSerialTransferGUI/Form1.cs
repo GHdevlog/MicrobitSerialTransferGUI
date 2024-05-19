@@ -15,6 +15,7 @@ namespace MicrobitSerialTransferGUI
     {
         string dataOutPut;
         string sendwith;
+        string dataIN;
 
 
         public Form1()
@@ -22,8 +23,10 @@ namespace MicrobitSerialTransferGUI
             InitializeComponent();
         }
 
+
         private void Form1_Load(object sender, EventArgs e)
         {
+            // 초기 설정 값 지정
             string[] ports = SerialPort.GetPortNames();
             cBoxCOMPORT.Items.AddRange(ports);
 
@@ -42,10 +45,14 @@ namespace MicrobitSerialTransferGUI
             chBoxWrite.Checked = true;
             sendwith = "Write";
 
+            chBoxAlwaysUpdate.Checked = false;
+            chBoxAddToOldData.Checked = true;
+
         }
 
         private void btnOpen_Click(object sender, EventArgs e)
         {
+            // Open 버튼 기능 설정
             try
             {
                 serialPort1.PortName = cBoxCOMPORT.Text;
@@ -113,6 +120,7 @@ namespace MicrobitSerialTransferGUI
             if(chBoxDtrEnable.Checked)
             {
                 serialPort1.DtrEnable = true;
+                MessageBox.Show("DTR Enalbed", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             else
             {
@@ -125,6 +133,7 @@ namespace MicrobitSerialTransferGUI
             if (chBoxRtsEnable.Checked)
             {
                 serialPort1.RtsEnable = true;
+                MessageBox.Show("RTS Enalbed", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             else
             {
@@ -190,6 +199,61 @@ namespace MicrobitSerialTransferGUI
                 sendwith = "Write";
                 chBoxWrite.Enabled = true;
                 chBoxWriteLine.Enabled = false;
+            }
+        }
+
+        private void serialPort1_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            dataIN = serialPort1.ReadExisting();
+            this.Invoke(new EventHandler(ShowData));
+        }
+
+        private void ShowData(object sender, EventArgs e)
+        {
+            int dataINLength = dataIN.Length;
+            lblDataInLength.Text = string.Format("{0:00}", dataINLength);
+
+            if (chBoxAlwaysUpdate.Checked)
+            {
+                tBoxDataIN.Text = dataIN;
+            }
+            else if (chBoxAddToOldData.Checked)
+            {
+                tBoxDataIN.Text += dataIN;
+            }
+        }
+
+        private void chBoxAlwaysUpdate_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chBoxAlwaysUpdate.Checked)
+            {
+                chBoxAlwaysUpdate.Checked = true;
+                chBoxAddToOldData.Checked = false;
+            }
+            else
+            {
+                chBoxAddToOldData.Checked = true;
+            }
+        }
+
+        private void chBoxAddToOldData_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chBoxAddToOldData.Checked)
+            {
+                chBoxAlwaysUpdate.Checked = false;
+                chBoxAddToOldData.Checked = true;
+            }
+            else
+            {
+                chBoxAlwaysUpdate.Checked = true;
+            }
+        }
+
+        private void btnClearDataIN_Click(object sender, EventArgs e)
+        {
+            if (tBoxDataIN.Text != "")
+            {
+                tBoxDataIN.Text = "";
             }
         }
     }
