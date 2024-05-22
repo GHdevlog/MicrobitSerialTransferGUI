@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO.Ports;
+using System.Security.Policy;
 
 namespace MicrobitSerialTransferGUI
 {
@@ -30,67 +31,52 @@ namespace MicrobitSerialTransferGUI
             string[] ports = SerialPort.GetPortNames();
             cBoxCOMPORT.Items.AddRange(ports);
 
-            btnOpen.Enabled = true;
-            btnClose.Enabled = false;
-
             chBoxDtrEnable.Checked = false;
             serialPort1.DtrEnable = false;
 
             chBoxRtsEnable.Checked = false;
             serialPort1.RtsEnable = false ;
 
-            btnSendData.Enabled = false;
+            btnSendData.Enabled = true;
 
-            chBoxWriteLine.Checked = false;
-            chBoxWrite.Checked = true;
-            sendwith = "Write";
+            sendwith = "Both";
 
-            chBoxAlwaysUpdate.Checked = false;
-            chBoxAddToOldData.Checked = true;
+            toolStripComboBox1.Text = "Add To Old Data";
+            toolStripComboBox2.Text = "Both";
+            toolStripComboBox3.Text = "BOTTOM";
 
         }
-
-        private void btnOpen_Click(object sender, EventArgs e)
+        private void oPENToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Open 버튼 기능 설정
             try
             {
                 serialPort1.PortName = cBoxCOMPORT.Text;
                 serialPort1.BaudRate = Convert.ToInt32(cBoxBaudRate.Text);
                 serialPort1.DataBits = Convert.ToInt32(cBoxDataBits.Text);
                 serialPort1.StopBits = (StopBits)Enum.Parse(typeof(StopBits), cBoxStopBits.Text);
-                serialPort1.Parity =  (Parity)Enum.Parse(typeof(Parity), cBoxParityBits.Text);
+                serialPort1.Parity = (Parity)Enum.Parse(typeof(Parity), cBoxParityBits.Text);
 
                 serialPort1.Open();
                 progressBar1.Value = 100;
 
-                lblSatausCom.Text = "ON";
-
-                btnOpen.Enabled = false;
-                btnClose.Enabled=true;
-            } 
+            }
             catch (Exception err)
             {
-                MessageBox.Show(err.Message,"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                btnOpen.Enabled = true;
-                btnClose.Enabled = false;
+                MessageBox.Show(err.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+
+        private void cLOSEToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (serialPort1.IsOpen)
             {
                 serialPort1.Close();
-                progressBar1.Value=0;
-
-                lblSatausCom.Text = "OFF";
-
-                btnOpen.Enabled = true;
-                btnClose.Enabled = false;
+                progressBar1.Value = 0;
 
             }
         }
+
 
         private void btnSendData_Click(object sender, EventArgs e)
         {
@@ -98,20 +84,50 @@ namespace MicrobitSerialTransferGUI
             {
                 dataOutPut = tBoxDataOut.Text;
 
-                if (sendwith == "Write")
+                if (sendwith == "None")
                 {
                     serialPort1.Write(dataOutPut);
-                }else if (sendwith == "WriteLine"){
-                    serialPort1.WriteLine(dataOutPut);
+                }
+                else if (sendwith == "Both")
+                {
+                    serialPort1.WriteLine(dataOutPut + "\r\n");
+                }
+                else if (sendwith == "New Line")
+                {
+                    serialPort1.WriteLine(dataOutPut + "\n");
+                }
+                else if (sendwith == "Carriage Return")
+                {
+                    serialPort1.WriteLine(dataOutPut + "\r");
                 }
             }
         }
 
-        private void btnClearDataOut_Click(object sender, EventArgs e)
+        private void toolStripComboBox2_DropDownClosed(object sender, EventArgs e)
         {
-            if(tBoxDataOut.Text != "")
+            if (toolStripComboBox2.Text == "None")
             {
-                tBoxDataOut.Text = "";
+                sendwith = "None";
+            }
+            else if (toolStripComboBox2.Text == "Both")
+            {
+                sendwith = "Both";
+            }
+            else if (toolStripComboBox2.Text == "New Line")
+            {
+                sendwith = "New Line";
+            }
+            else if (toolStripComboBox2.Text == "Carriage Return")
+            {
+                sendwith = "Carriage Return";
+            }
+        }
+
+        private void clearToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (tBoxDataIN.Text != "")
+            {
+                tBoxDataIN.Text = "";
             }
         }
 
@@ -146,59 +162,38 @@ namespace MicrobitSerialTransferGUI
             int dataOUTLength = tBoxDataOut.TextLength;
             lblDataOutLength.Text = string.Format("{0:00}", dataOUTLength);
 
-            if (chBoxUsingEnter.Checked)
-            {
-                tBoxDataOut.Text = tBoxDataOut.Text.Replace(Environment.NewLine, "");
-            }
-        }
-
-        private void chBoxUsingButton_CheckedChanged(object sender, EventArgs e)
-        {
-            if(chBoxUsingButton.Checked) { 
-                btnSendData.Enabled = true;
-            }
-            else
-            {
-                btnSendData.Enabled= false;
-            }
         }
 
         private void tBoxDataOut_KeyDown(object sender, KeyEventArgs e)
         {
-            if (chBoxUsingEnter.Checked)
+            
+            if(e.KeyCode == Keys.Enter)
             {
-                if(e.KeyCode == Keys.Enter)
-                {
-                    dataOutPut = tBoxDataOut.Text;
-
-                    if (sendwith == "Write")
-                    {
-                        serialPort1.Write(dataOutPut);
-                    }
-                    else if (sendwith == "WriteLine")
-                    {
-                        serialPort1.WriteLine(dataOutPut);
-                    }
-                }
+                this.doSomething();
+                e.Handled = true;
+                e.SuppressKeyPress = true;
             }
+            
         }
 
-        private void chBoxWriteLine_CheckedChanged(object sender, EventArgs e)
+        private void doSomething()
         {
-            if (chBoxUsingEnter.Checked) {
-                sendwith = "WriteLine";
-                chBoxWrite.Enabled = false;
-                chBoxWriteLine.Enabled = true;
-            }
-        }
-
-        private void chBoxWrite_CheckedChanged(object sender, EventArgs e)
-        {
-            if (chBoxUsingEnter.Checked)
+            dataOutPut = tBoxDataOut.Text;
+            if (toolStripComboBox2.Text == "None")
             {
-                sendwith = "Write";
-                chBoxWrite.Enabled = true;
-                chBoxWriteLine.Enabled = false;
+                sendwith = "None";
+            }
+            else if (toolStripComboBox2.Text == "Both")
+            {
+                sendwith = "Both";
+            }
+            else if (toolStripComboBox2.Text == "New Line")
+            {
+                sendwith = "New Line";
+            }
+            else if (toolStripComboBox2.Text == "Carriage Return")
+            {
+                sendwith = "Carriage Return";
             }
         }
 
@@ -208,44 +203,28 @@ namespace MicrobitSerialTransferGUI
             this.Invoke(new EventHandler(ShowData));
         }
 
+
         private void ShowData(object sender, EventArgs e)
         {
             int dataINLength = dataIN.Length;
             lblDataInLength.Text = string.Format("{0:00}", dataINLength);
 
-            if (chBoxAlwaysUpdate.Checked)
+            if (toolStripComboBox1.Text == "Always Update")
             {
                 tBoxDataIN.Text = dataIN;
             }
-            else if (chBoxAddToOldData.Checked)
+            else if (toolStripComboBox1.Text == "Add To Old Data")
             {
-                tBoxDataIN.Text += dataIN;
-            }
-        }
-
-        private void chBoxAlwaysUpdate_CheckedChanged(object sender, EventArgs e)
-        {
-            if (chBoxAlwaysUpdate.Checked)
-            {
-                chBoxAlwaysUpdate.Checked = true;
-                chBoxAddToOldData.Checked = false;
-            }
-            else
-            {
-                chBoxAddToOldData.Checked = true;
-            }
-        }
-
-        private void chBoxAddToOldData_CheckedChanged(object sender, EventArgs e)
-        {
-            if (chBoxAddToOldData.Checked)
-            {
-                chBoxAlwaysUpdate.Checked = false;
-                chBoxAddToOldData.Checked = true;
-            }
-            else
-            {
-                chBoxAlwaysUpdate.Checked = true;
+                if (toolStripComboBox3.Text == "TOP")
+                {
+                    tBoxDataIN.Text = tBoxDataIN.Text.Insert(0,dataIN);
+                }
+                else if (toolStripComboBox3.Text == "BOTTOM")
+                {
+                    tBoxDataIN.AppendText(dataIN);
+                    tBoxDataIN.SelectionStart = tBoxDataIN.Text.Length;
+                    tBoxDataIN.ScrollToCaret();
+                }
             }
         }
 
@@ -255,6 +234,19 @@ namespace MicrobitSerialTransferGUI
             {
                 tBoxDataIN.Text = "";
             }
+        }
+
+        private void clearToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (tBoxDataOut.Text != "")
+            {
+                tBoxDataOut.Text = "";
+            }
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
         }
     }
 }
