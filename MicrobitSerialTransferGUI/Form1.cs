@@ -17,6 +17,7 @@ namespace MicrobitSerialTransferGUI
         string dataOutPut;
         string sendwith;
         string dataIN;
+        string dataBuffer = string.Empty;
 
 
         public Form1()
@@ -200,28 +201,40 @@ namespace MicrobitSerialTransferGUI
         private void serialPort1_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             dataIN = serialPort1.ReadExisting();
-            this.Invoke(new EventHandler(ShowData));
+            dataBuffer += dataIN;
+            this.Invoke(new EventHandler(ProcessData));
         }
 
-
-        private void ShowData(object sender, EventArgs e)
+        private void ProcessData(object sender, EventArgs e)
         {
-            int dataINLength = dataIN.Length;
+            while (dataBuffer.Contains("\r\n"))
+            {
+                int endOfPacket = dataBuffer.IndexOf("\r\n");
+                string completePacket = dataBuffer.Substring(0, endOfPacket+2);
+                dataBuffer = dataBuffer.Substring(endOfPacket + 2);
+
+                ShowData(completePacket);
+            }
+        }
+
+        private void ShowData(string data)
+        {
+            int dataINLength = data.Length;
             lblDataInLength.Text = string.Format("{0:00}", dataINLength);
 
             if (toolStripComboBox1.Text == "Always Update")
             {
-                tBoxDataIN.Text = dataIN;
+                tBoxDataIN.Text = data;
             }
             else if (toolStripComboBox1.Text == "Add To Old Data")
             {
                 if (toolStripComboBox3.Text == "TOP")
                 {
-                    tBoxDataIN.Text = tBoxDataIN.Text.Insert(0,dataIN);
+                    tBoxDataIN.Text = tBoxDataIN.Text.Insert(0, data);
                 }
                 else if (toolStripComboBox3.Text == "BOTTOM")
                 {
-                    tBoxDataIN.AppendText(dataIN);
+                    tBoxDataIN.AppendText(data);
                     tBoxDataIN.SelectionStart = tBoxDataIN.Text.Length;
                     tBoxDataIN.ScrollToCaret();
                 }

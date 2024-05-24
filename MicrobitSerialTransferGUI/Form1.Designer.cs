@@ -65,12 +65,12 @@
             this.clearToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.showDataWithToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripComboBox1 = new System.Windows.Forms.ToolStripComboBox();
+            this.dataPositionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripComboBox3 = new System.Windows.Forms.ToolStripComboBox();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox12 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.groupBox14 = new System.Windows.Forms.GroupBox();
-            this.dataPositionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripComboBox3 = new System.Windows.Forms.ToolStripComboBox();
             this.groupBox1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.groupBox12.SuspendLayout();
@@ -414,7 +414,7 @@
             // clearToolStripMenuItem1
             // 
             this.clearToolStripMenuItem1.Name = "clearToolStripMenuItem1";
-            this.clearToolStripMenuItem1.Size = new System.Drawing.Size(270, 34);
+            this.clearToolStripMenuItem1.Size = new System.Drawing.Size(244, 34);
             this.clearToolStripMenuItem1.Text = "Clear";
             this.clearToolStripMenuItem1.Click += new System.EventHandler(this.clearToolStripMenuItem1_Click);
             // 
@@ -423,7 +423,7 @@
             this.showDataWithToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripComboBox1});
             this.showDataWithToolStripMenuItem.Name = "showDataWithToolStripMenuItem";
-            this.showDataWithToolStripMenuItem.Size = new System.Drawing.Size(270, 34);
+            this.showDataWithToolStripMenuItem.Size = new System.Drawing.Size(244, 34);
             this.showDataWithToolStripMenuItem.Text = "Show Data With";
             // 
             // toolStripComboBox1
@@ -435,6 +435,24 @@
             "Add To Old Data"});
             this.toolStripComboBox1.Name = "toolStripComboBox1";
             this.toolStripComboBox1.Size = new System.Drawing.Size(121, 33);
+            // 
+            // dataPositionToolStripMenuItem
+            // 
+            this.dataPositionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripComboBox3});
+            this.dataPositionToolStripMenuItem.Name = "dataPositionToolStripMenuItem";
+            this.dataPositionToolStripMenuItem.Size = new System.Drawing.Size(244, 34);
+            this.dataPositionToolStripMenuItem.Text = "Data Position";
+            // 
+            // toolStripComboBox3
+            // 
+            this.toolStripComboBox3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.toolStripComboBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.toolStripComboBox3.Items.AddRange(new object[] {
+            "TOP",
+            "BOTTOM"});
+            this.toolStripComboBox3.Name = "toolStripComboBox3";
+            this.toolStripComboBox3.Size = new System.Drawing.Size(121, 33);
             // 
             // aboutToolStripMenuItem
             // 
@@ -473,24 +491,6 @@
             this.groupBox14.Size = new System.Drawing.Size(241, 60);
             this.groupBox14.TabIndex = 10;
             this.groupBox14.TabStop = false;
-            // 
-            // dataPositionToolStripMenuItem
-            // 
-            this.dataPositionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripComboBox3});
-            this.dataPositionToolStripMenuItem.Name = "dataPositionToolStripMenuItem";
-            this.dataPositionToolStripMenuItem.Size = new System.Drawing.Size(270, 34);
-            this.dataPositionToolStripMenuItem.Text = "Data Position";
-            // 
-            // toolStripComboBox3
-            // 
-            this.toolStripComboBox3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.toolStripComboBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.toolStripComboBox3.Items.AddRange(new object[] {
-            "TOP",
-            "BOTTOM"});
-            this.toolStripComboBox3.Name = "toolStripComboBox3";
-            this.toolStripComboBox3.Size = new System.Drawing.Size(121, 33);
             // 
             // Form1
             // 
